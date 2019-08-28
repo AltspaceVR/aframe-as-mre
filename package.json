@@ -1,0 +1,51 @@
+{
+	"name": "@microsoft/aframe-as-mre",
+	"version": "0.12.1",
+	"description": "Host an A-Frame app as a Mixed Reality Extension",
+	"bin": {
+		"aframe-as-mre": "built/index.js"
+	},
+	"main": "built/index.js",
+	"author": "Microsoft Corporation",
+	"license": "MIT",
+	"keywords": [
+		"mixed reality",
+		"virtual reality",
+		"vr",
+		"altspacevr",
+		"node",
+		"aframe"
+	],
+	"engines": {
+		"node": ">=8.12.0",
+		"npm": ">=6.4.1"
+	},
+	"bugs": {
+		"url": "https://github.com/Microsoft/mixed-reality-extension-sdk/issues"
+	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/Microsoft/mixed-reality-extension-sdk.git"
+	},
+	"scripts": {
+		"clean": "tsc --build --clean",
+		"build": "tsc --build && npm run lint",
+		"lint": "tslint -p ./tsconfig.json -c ./tslint.json",
+		"prepublishOnly": "npm run build",
+		"start": "node .",
+		"debug": "node --nolazy --inspect-brk=9229 . https://aframe.io/aframe/examples/boilerplate/hello-world/"
+	},
+	"devDependencies": {
+		"@types/mime-types": "^2.1.0",
+		"@types/node": "^10.12.0",
+		"@types/htmlparser2": "^3.10.1",
+		"@types/parse-color": "^1.0.0",
+		"tslint": "5.11.0",
+		"typescript": "3.0.3"
+	},
+	"dependencies": {
+		"@microsoft/mixed-reality-extension-sdk": "^0.13.0",
+		"htmlparser2": "^4.0.0",
+		"parse-color": "^1.0.0"
+	}
+}
