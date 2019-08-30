@@ -33,8 +33,12 @@ export async function parseHtmlFrom(url: string): Promise<Element> {
 	const nodes = parseDOM(docString, { decodeEntities: true });
 	log.info('app', 'Parse successful');
 	const scene = domutils.findOne(n => n.tagName === 'a-scene', nodes, true);
-	log.info('app', 'a-scene found');
-	return scene;
+	if (scene) {
+		log.info('app', 'a-scene found');
+		return scene;
+	} else {
+		throw new Error('No a-scene found!');
+	}
 }
 
 /** From https://www.tomas-dvorak.cz/posts/nodejs-request-without-dependencies/ */
@@ -46,7 +50,8 @@ export function downloadFile(url: string): Promise<string> {
 		const request = get(url, (response) => {
 			// handle http errors
 			if (response.statusCode < 200 || response.statusCode > 299) {
-				reject(new Error('Failed to load page, status code: ' + response.statusCode));
+				reject('Failed to load page, status code: ' + response.statusCode);
+				return;
 			}
 			// temporary data holder
 			const body = [] as string[];

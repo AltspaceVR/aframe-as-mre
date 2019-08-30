@@ -1,6 +1,6 @@
 {
 	"name": "@microsoft/aframe-as-mre",
-	"version": "0.12.1",
+	"version": "0.0.1",
 	"description": "Host an A-Frame app as a Mixed Reality Extension",
 	"bin": {
 		"aframe-as-mre": "built/index.js"
@@ -44,7 +44,7 @@
 		"typescript": "3.0.3"
 	},
 	"dependencies": {
-		"@microsoft/mixed-reality-extension-sdk": "^0.13.0",
+		"@microsoft/mixed-reality-extension-sdk": "^0.13.1",
 		"htmlparser2": "^4.0.0",
 		"parse-color": "^1.0.0"
 	}

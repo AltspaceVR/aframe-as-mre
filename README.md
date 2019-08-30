@@ -3,6 +3,9 @@
 This package loads an [A-Frame](https://aframe.io/) scene as a
 [Mixed Reality Extension](https://github.com/Microsoft/mixed-reality-extension-sdk).
 
+<img style='height: 500px' src='public/demo-mre.jpg' />
+<img style='height: 500px' src='public/demo-aframe.jpg' />
+
 ## Usage
 
 1. Install this adapter: `npm install -g @microsoft/aframe-as-mre`
