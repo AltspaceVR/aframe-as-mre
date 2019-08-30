@@ -10,14 +10,19 @@ import { convertElement } from './elementConverters';
 import { parseHtmlFrom } from './loader';
 
 export default class App {
-	public constructor(public context: MRE.Context, public params: MRE.ParameterSet, public aframeUrl: string) {
+	public constructor(
+		public context: MRE.Context,
+		public params: MRE.ParameterSet,
+		public baseUrl: string,
+		public aframeUrl: string
+	) {
 		context.onStarted(() => this.started());
 	}
 
 	public async started() {
 		let sceneDom: Element;
 		try {
-			sceneDom = await parseHtmlFrom(this.aframeUrl);
+			sceneDom = await parseHtmlFrom(this.aframeUrl, this.baseUrl);
 		} catch (e) {
 			MRE.log.error('app', e);
 			MRE.Actor.CreateEmpty(this.context, {

@@ -4,6 +4,8 @@
  */
 
 import * as MRE from '@microsoft/mixed-reality-extension-sdk';
+import { resolve as resolvePath } from 'path';
+
 import App from './app';
 
 let webhost: MRE.WebHost;
@@ -17,7 +19,10 @@ let webhost: MRE.WebHost;
 		aframeUrl = process.env.AFRAME_URL;
 	}
 
-	webhost = new MRE.WebHost();
+	webhost = new MRE.WebHost({
+		baseDir: resolvePath(__dirname, '../public')
+	});
+
 	webhost.adapter.onConnection((context, params) => {
 		let sessionAframeUrl = aframeUrl;
 		if (!sessionAframeUrl) {
@@ -27,7 +32,7 @@ let webhost: MRE.WebHost;
 			MRE.log.error('app', 'No URL specified');
 			throw new Error('No URL specified');
 		}
-		return new App(context, params, sessionAframeUrl);
+		return new App(context, params, webhost.baseUrl, sessionAframeUrl);
 	});
 })();
 

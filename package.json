@@ -33,7 +33,7 @@
 		"lint": "tslint -p ./tsconfig.json -c ./tslint.json",
 		"prepublishOnly": "npm run build",
 		"start": "node .",
-		"debug": "node --nolazy --inspect-brk=9229 . https://aframe.io/aframe/examples/boilerplate/hello-world/"
+		"debug": "node --nolazy --inspect-brk=9229 . https://aframe.io/aframe/examples/animation/aframe-logo/?ui=false"
 	},
 	"devDependencies": {
 		"@types/mime-types": "^2.1.0",

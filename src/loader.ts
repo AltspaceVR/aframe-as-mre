@@ -4,24 +4,25 @@
  */
 
 import { log } from '@microsoft/mixed-reality-extension-sdk';
+import { Element } from 'domhandler';
+import * as domutils from 'domutils';
+import { parseDOM } from 'htmlparser2';
 import { get as httpGet } from 'http';
 import { get as httpsGet } from 'https';
 import { resolve as pathResolve } from 'path';
+import { URL } from 'url';
 import { promisify } from 'util';
 
 import { readFile as _readFile } from 'fs';
 const readFile = promisify(_readFile);
 
-import { Element } from 'domhandler';
-import * as domutils from 'domutils';
-import { parseDOM } from 'htmlparser2';
-
-export async function parseHtmlFrom(url: string): Promise<Element> {
+export async function parseHtmlFrom(url: string, baseUrl: string): Promise<Element> {
 	let docString: string;
 	try {
-		docString = await downloadFile(url);
+		docString = await downloadFile(url, baseUrl);
 		log.info('app', `Loaded from URL: ${url}`);
-	} catch {
+	} catch (e) {
+		console.log(e);
 		try {
 			docString = await loadFile(url);
 			log.info('app', `Loaded from file: ${url}`);
@@ -42,12 +43,14 @@ export async function parseHtmlFrom(url: string): Promise<Element> {
 }
 
 /** From https://www.tomas-dvorak.cz/posts/nodejs-request-without-dependencies/ */
-export function downloadFile(url: string): Promise<string> {
+export function downloadFile(url: string, baseUrl: string): Promise<string> {
 	// return new pending promise
 	return new Promise((resolve, reject) => {
+		const urlObject = new URL(url, baseUrl);
+		console.log(urlObject);
 		// select http or https module, depending on reqested url
-		const get = url.startsWith('https') ? httpsGet : httpGet;
-		const request = get(url, (response) => {
+		const get = urlObject.protocol === 'https:' ? httpsGet : httpGet;
+		const request = get(urlObject, (response) => {
 			// handle http errors
 			if (response.statusCode < 200 || response.statusCode > 299) {
 				reject('Failed to load page, status code: ' + response.statusCode);
