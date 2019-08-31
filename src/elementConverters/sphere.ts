@@ -6,10 +6,11 @@
 import * as MRE from '@microsoft/mixed-reality-extension-sdk';
 import { Element } from 'domhandler';
 
+import AssetCache from '../assetCache';
 import { cssToPropMap, PropMap, propMapToCss } from '../util';
-import * as EntityConverter from './entity';
+import EntityConverter from './entity';
 
-export function convertElement(elem: Element, context: MRE.Context, parentId?: string): MRE.Actor {
+export default function convertElement(elem: Element, cache: AssetCache, parentId?: string): Promise<MRE.Actor> {
 	const geoProps = {
 		...cssToPropMap(elem.attribs.geometry),
 		primitive: 'sphere',
@@ -35,5 +36,5 @@ export function convertElement(elem: Element, context: MRE.Context, parentId?: s
 
 	delete elem.attribs.color;
 
-	return EntityConverter.convertElement(elem, context, parentId);
+	return EntityConverter(elem, cache, parentId);
 }

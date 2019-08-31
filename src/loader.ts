@@ -9,27 +9,10 @@ import * as domutils from 'domutils';
 import { parseDOM } from 'htmlparser2';
 import { get as httpGet } from 'http';
 import { get as httpsGet } from 'https';
-import { resolve as pathResolve } from 'path';
-import { URL } from 'url';
-import { promisify } from 'util';
 
-import { readFile as _readFile } from 'fs';
-const readFile = promisify(_readFile);
-
-export async function parseHtmlFrom(url: string, baseUrl: string): Promise<Element> {
-	let docString: string;
-	try {
-		docString = await downloadFile(url, baseUrl);
-		log.info('app', `Loaded from URL: ${url}`);
-	} catch (e) {
-		console.log(e);
-		try {
-			docString = await loadFile(url);
-			log.info('app', `Loaded from file: ${url}`);
-		} catch {
-			throw new Error(`Given path ${url} is neither a URL nor a valid file`);
-		}
-	}
+export async function parseHtmlFrom(url: string): Promise<Element> {
+	const docString = await downloadFile(url);
+	log.info('app', `Loaded from URL: ${url}`);
 
 	const nodes = parseDOM(docString, { decodeEntities: true });
 	log.info('app', 'Parse successful');
@@ -42,15 +25,13 @@ export async function parseHtmlFrom(url: string, baseUrl: string): Promise<Eleme
 	}
 }
 
-/** From https://www.tomas-dvorak.cz/posts/nodejs-request-without-dependencies/ */
-export function downloadFile(url: string, baseUrl: string): Promise<string> {
+/** Based on https://www.tomas-dvorak.cz/posts/nodejs-request-without-dependencies/ */
+export function downloadFile(url: string): Promise<string> {
 	// return new pending promise
 	return new Promise((resolve, reject) => {
-		const urlObject = new URL(url, baseUrl);
-		console.log(urlObject);
 		// select http or https module, depending on reqested url
-		const get = urlObject.protocol === 'https:' ? httpsGet : httpGet;
-		const request = get(urlObject, (response) => {
+		const get = url.startsWith('https:') ? httpsGet : httpGet;
+		const request = get(url, (response) => {
 			// handle http errors
 			if (response.statusCode < 200 || response.statusCode > 299) {
 				reject('Failed to load page, status code: ' + response.statusCode);
@@ -66,8 +47,4 @@ export function downloadFile(url: string, baseUrl: string): Promise<string> {
 		// handle connection errors of the request
 		request.on('error', (err) => reject(err));
 	});
-}
-
-export function loadFile(path: string, base = ''): Promise<string> {
-	return readFile(pathResolve(base, path), { encoding: 'utf8' });
 }

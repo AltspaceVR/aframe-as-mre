@@ -6,9 +6,11 @@
 import * as MRE from '@microsoft/mixed-reality-extension-sdk';
 
 import AssetCache from '../assetCache';
-import { cssToPropMap } from '../util';
 
-export default async function animation(attribute: string, entity: Partial<MRE.ActorLike>, cache: AssetCache) {
-	const props = cssToPropMap(attribute);
+export async function gltfModel(attribute: string, entity: Partial<MRE.ActorLike>, cache: AssetCache) {
+
+}
+
+export async function lateGltfModel(attribute: string, entity: MRE.Actor, cache: AssetCache) {
 
 }

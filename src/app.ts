@@ -5,7 +5,9 @@
 
 import * as MRE from '@microsoft/mixed-reality-extension-sdk';
 import { Element } from 'domhandler';
+import { URL } from 'url';
 
+import AssetCache from './assetCache';
 import { convertElement } from './elementConverters';
 import { parseHtmlFrom } from './loader';
 
@@ -20,9 +22,10 @@ export default class App {
 	}
 
 	public async started() {
+		const sceneUrl = new URL(this.aframeUrl, this.baseUrl);
 		let sceneDom: Element;
 		try {
-			sceneDom = await parseHtmlFrom(this.aframeUrl, this.baseUrl);
+			sceneDom = await parseHtmlFrom(sceneUrl.href);
 		} catch (e) {
 			MRE.log.error('app', e);
 			MRE.Actor.CreateEmpty(this.context, {
@@ -41,6 +44,9 @@ export default class App {
 			return;
 		}
 
-		convertElement(sceneDom, this.context);
+		const assetCache = new AssetCache(this.context, sceneUrl.href);
+		convertElement(sceneDom, assetCache).catch(reason => {
+			MRE.log.error('app', reason);
+		});
 	}
 }

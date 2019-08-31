@@ -5,13 +5,14 @@
 
 import * as MRE from '@microsoft/mixed-reality-extension-sdk';
 
+import AssetCache from '../assetCache';
 import { cssToPropMap } from '../util';
 
-export default function geometry(attribute: string, entity: Partial<MRE.ActorLike>, context: MRE.Context): void {
+export default async function geometry(attribute: string, entity: Partial<MRE.ActorLike>, cache: AssetCache) {
 	const geoProps = cssToPropMap(attribute);
 
 	let mesh: MRE.Mesh;
-	const assetContainer = new MRE.AssetContainer(context);
+	const assetContainer = new MRE.AssetContainer(cache.context);
 	switch (geoProps.primitive) {
 		case 'box':
 			mesh = assetContainer.createBoxMesh('box',

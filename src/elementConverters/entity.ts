@@ -6,9 +6,10 @@
 import * as MRE from '@microsoft/mixed-reality-extension-sdk';
 import { Element } from 'domhandler';
 
-import { componentConverters } from '../componentConverters';
+import AssetCache from '../assetCache';
+import { componentConverters, lateComponentConverters } from '../componentConverters';
 
-export function convertElement(elem: Element, context: MRE.Context, parentId?: string): MRE.Actor {
+export default async function convertElement(elem: Element, cache: AssetCache, parentId?: string): Promise<MRE.Actor> {
 	const actorDef = {
 		parentId,
 		name: elem.tagName
@@ -16,11 +17,19 @@ export function convertElement(elem: Element, context: MRE.Context, parentId?: s
 
 	for (const tag in elem.attribs) {
 		if (componentConverters[tag]) {
-			componentConverters[tag](elem.attribs[tag], actorDef, context);
+			await componentConverters[tag](elem.attribs[tag], actorDef, cache);
 		}
 	}
 
-	return MRE.Actor.Create(context, {
+	const actor = MRE.Actor.Create(cache.context, {
 		actor: actorDef
 	});
+
+	for (const tag in elem.attribs) {
+		if (lateComponentConverters[tag]) {
+			await lateComponentConverters[tag](elem.attribs[tag], actor, cache);
+		}
+	}
+
+	return actor;
 }

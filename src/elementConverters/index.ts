@@ -6,27 +6,35 @@
 import * as MRE from '@microsoft/mixed-reality-extension-sdk';
 import { Element } from 'domhandler';
 
-import AssetsConverter from './assets';
-import * as BoxConverter from './box';
-import * as CylinderConverter from './cylinder';
-import ElementToActorConverter from './elementToActorConverter';
-import * as EntityConverter from './entity';
-import * as PlaneConverter from './plane';
-import * as SphereConverter from './sphere';
+import AssetCache from '../assetCache';
+
+import AssetItemConverter from './assetItem';
+import BoxConverter from './box';
+import CylinderConverter from './cylinder';
+import EntityConverter from './entity';
+import PlaneConverter from './plane';
+import SphereConverter from './sphere';
+
+export type ElementConverter = (
+	elem: Element,
+	cache: AssetCache,
+	parentId?: string
+) => Promise<MRE.Actor>;
 
 const converters = {
+	'a-asset-item': AssetItemConverter,
 	'a-box': BoxConverter,
 	'a-cylinder': CylinderConverter,
 	'a-entity': EntityConverter,
 	'a-plane': PlaneConverter,
 	'a-sphere': SphereConverter
-} as { [tagName: string]: ElementToActorConverter };
+} as { [tagName: string]: ElementConverter };
 
-export function convertElement(elem: Element, context: MRE.Context, parentId?: string) {
+export async function convertElement(elem: Element, cache: AssetCache, parentId?: string) {
 	const handler = converters[elem.tagName.toLowerCase()];
 	let actor: MRE.Actor = null;
 	if (handler) {
-		actor = handler.convertElement(elem, context, parentId);
+		actor = await handler(elem, cache, parentId);
 	}
 
 	for (const child of elem.children) {
@@ -34,6 +42,6 @@ export function convertElement(elem: Element, context: MRE.Context, parentId?: s
 			continue;
 		}
 
-		convertElement(child, context, actor ? actor.id : parentId);
+		await convertElement(child, cache, actor ? actor.id : parentId);
 	}
 }

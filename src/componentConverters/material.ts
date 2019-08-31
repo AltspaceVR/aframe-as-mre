@@ -6,11 +6,12 @@
 import * as MRE from '@microsoft/mixed-reality-extension-sdk';
 import parseColor from 'parse-color';
 
+import AssetCache from '../assetCache';
 import { cssToPropMap } from '../util';
 
-export default function material(attribute: string, entity: Partial<MRE.ActorLike>, context: MRE.Context): void {
+export default async function material(attribute: string, entity: Partial<MRE.ActorLike>, cache: AssetCache) {
 	const matDef = {} as MRE.MaterialLike;
-	const assetContainer = new MRE.AssetContainer(context);
+	const assetContainer = new MRE.AssetContainer(cache.context);
 	const matProps = cssToPropMap(attribute);
 
 	if (matProps.color) {
